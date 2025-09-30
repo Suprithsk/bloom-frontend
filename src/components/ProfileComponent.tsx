@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Edit3 } from "lucide-react";
+import { User, Edit3, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { getProfileInfo } from "@/api/dashboardService";
 import { DashboardNavbar } from "./dashboard-navbar";
@@ -83,9 +83,19 @@ const ProfileComponent = () => {
         <div className="min-h-screen bg-background ">
         <DashboardNavbar />
         <main className="pt-16 mb-10 ">
+            <div className="flex items-center gap-4 m-8">
+                        <Button
+                            variant="ghost"
+                            onClick={() => navigate('/dashboard')}
+                            className="p-2"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </Button>
+                        <h1 className="text-2xl font-bold">Profile Details</h1>
+            </div>
             <Card className="m-8 p-0">
                 <CardContent className="p-8">
-                    {/* Profile Header */}
+                    
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center justify-center gap-6">
                             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center overflow-hidden">

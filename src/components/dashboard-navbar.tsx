@@ -69,9 +69,7 @@ export function DashboardNavbar() {
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/replaci-vision", label: "Replaci Vision" },
-    { href: "/models", label: "My Models" },
     { href: "/subscriptions", label: "Subscriptions" },
-    { href: "/manage-leads", label: "Manage Leads" },
     { href: "/settings", label: "Settings" },
   ];
 

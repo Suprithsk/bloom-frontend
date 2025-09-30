@@ -7,6 +7,7 @@ import {
     fetchUserProfile,
     deleteModel,
     editModel,
+    deleteLeadById,
 } from "@/api/dashboardService";
 import {
     DashboardResponse,
@@ -46,6 +47,7 @@ interface DashboardContextType {
     }) => void;
     isDeleting: boolean;
     isEditing: boolean;
+    deleteLeadMutation: (leadId: string) => void;
 }
 
 interface DashboardProviderProps {
@@ -168,6 +170,20 @@ export const DashboardProvider: FC<DashboardProviderProps> = ({ children }) => {
             toast.error("Failed to update model");
         },
     });
+    const deleteLeadMutation = useMutation({
+        mutationFn: (leadId: string) => deleteLeadById(leadId),
+        onSuccess: async (response, leadId) => {
+            // toast.success("Lead deleted successfully");
+            await queryClient.refetchQueries({ queryKey: ["leads"] });
+            await queryClient.refetchQueries({ queryKey: ["dashboard"] });
+        },
+        onError: (error: ErrorValue) => {
+            console.error("Delete error:", error);
+            toast.error(
+                error?.response?.data?.message || "Failed to delete lead"
+            );
+        }
+    });
 
     // Process existing data
     const models =
@@ -178,13 +194,14 @@ export const DashboardProvider: FC<DashboardProviderProps> = ({ children }) => {
 
     const modelsDataList = modelsData?.data?.data || [];
     const leads = leadsData || [];
+    console.log(leadsData)
     const userProfile = profileData?.data?.result;
-    // console.log(dashLoading, modelsLoading, leadsLoading, profileLoading);
+    console.log(dashLoading, modelsLoading, leadsLoading, profileLoading);
     const contextValue: DashboardContextType = {
         dashboardData: dashboardData?.data,
         modelsData,
         models,
-        leads,
+        leads: leadsData?.data?.result,
         userProfile,
         modelsDataList: modelsData?.data?.data || [],
         isLoading:
@@ -195,6 +212,7 @@ export const DashboardProvider: FC<DashboardProviderProps> = ({ children }) => {
         editModelMutation: editModelMutation.mutateAsync,
         isDeleting: deleteModelMutation.isPending,
         isEditing: editModelMutation.isPending,
+        deleteLeadMutation: deleteLeadMutation.mutateAsync,
     };
 
     return (

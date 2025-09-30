@@ -395,14 +395,14 @@ const EditProfileComponent = () => {
                                         variant="outline"
                                         onClick={cancelSubmitDetails}
                                         disabled={isSaving}
-                                        className="px-8 py-2 uppercase"
+                                        className="px-8 py-2"
                                     >
                                         Cancel
                                     </Button>
                                     <Button
                                         type="submit"
                                         disabled={isSaving}
-                                        className="bg-green-600 hover:bg-green-700 px-8 py-2 uppercase"
+                                        className="bg-green-600 hover:bg-green-700 px-8 py-2"
                                     >
                                         {isSaving ? "Saving..." : "Submit"}
                                     </Button>

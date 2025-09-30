@@ -1,16 +1,20 @@
-import { Users, Plus } from "lucide-react";
+import { Users, Plus, X } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Card } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { Lead } from "@/types/dashboard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { DashboardContext } from "@/context/DasboardContext";
+import { toast } from "sonner";
+import DeleteModal from "./delete-modal";
 
 const LeadsTab = ({ leads }: { leads: Lead[] }) => {
     const navigate = useNavigate();
     const [selectedSort, setSelectedSort] = useState("all");
     const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
-
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+    const { deleteLeadMutation } = useContext(DashboardContext) || {};
     const getLeadStatusColor = (status: string) => {
         switch (status) {
             case "NEW":
@@ -18,7 +22,7 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
             case "CONTACTED":
                 return "bg-yellow-500 text-white";
             case "COMPLETED":
-                return "bg-green-500 text-white";
+                return "bg-green-500 text-white hover:bg-green-400";
             case "CLOSED":
                 return "bg-gray-500 text-white";
             default:
@@ -60,7 +64,20 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedSort(e.target.value);
     };
-
+    const handleDelete = async (leadId:string) => {
+            try {
+                const response = await deleteLeadMutation!(leadId!);
+                toast.success("Lead deleted successfully!");
+                setTimeout(()=>{
+                    navigate('/dashboard')
+                }, 2000)
+            } catch (error) {
+                console.error("Error deleting lead:", error);
+                toast.error(error?.response?.data?.message || "Error deleting lead");
+            } finally {
+                setShowDeleteConfirm(null);
+            }
+    };
     return (
         <div className="border p-4 rounded-lg bg-gray-50">
             <div className="flex justify-between items-center mb-6">
@@ -163,24 +180,35 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="text-xs px-2 py-1 bg-green-400 text-white hover:bg-green-400 hover:text-white"
+                                                    className="text-xs px-2 py-1 bg-green-500 text-white hover:bg-green-400 hover:text-white"
                                                     onClick={() =>
-                                                        navigate(`/leads/${lead.lead_id}`)
+                                                        navigate(`/lead/${lead.lead_id}`)
                                                     }
                                                 >
                                                     View
+                                                </Button>
+                                                <Button
+                                                    variant="edit"
+                                                    size="sm"
+                                                    className="text-xs px-2 py-1"
+                                                    onClick={() => {
+                                                        navigate(`/edit-lead/${lead.lead_id}`);
+                                                    }}
+                                                >
+                                                    Edit
                                                 </Button>
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
                                                     className="text-xs px-2 py-1"
                                                     onClick={() => {
-                                                        /* Handle delete */
+                                                        setShowDeleteConfirm(String(lead.lead_id));
                                                         console.log("Delete lead:", lead.lead_id);
                                                     }}
                                                 >
                                                     Delete
                                                 </Button>
+                                                
                                             </div>
                                         </td>
                                     </tr>
@@ -196,7 +224,13 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
                     </table>
                 </div>
             </div>
-
+            {showDeleteConfirm && (
+                <DeleteModal 
+                    handleDelete={handleDelete}
+                    setShowDeleteConfirm={setShowDeleteConfirm}
+                    showDeleteConfirm={showDeleteConfirm}
+                />
+            )}
             {/* Empty State */}
             {leads.length === 0 && (
                 <Card className="p-8 text-center">
