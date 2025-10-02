@@ -17,89 +17,92 @@ import Settings from "./pages/Settings";
 import LeadComponent from "./pages/LeadDetails";
 import EditLead from "./pages/EditLead";
 import TryOn from "./pages/Tryon";
+import ErrorBoundary from "./pages/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-    <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-            <Sonner />
+    <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+                <Sonner />
 
-            <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/about" element={<About />} />
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/models"
-                    element={
-                        <ProtectedRoute>
-                            <Models />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/profile"
-                    element={
-                        <ProtectedRoute>
-                            <Profile />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/edit-profile"
-                    element={
-                        <ProtectedRoute>
-                            <EditProfile />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/settings"
-                    element={
-                        <ProtectedRoute>
-                            <Settings />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/lead/:leadId"
-                    element={
-                        <ProtectedRoute>
-                            <LeadComponent />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/edit-lead/:leadId"
-                    element={
-                        <ProtectedRoute>
-                            <EditLead />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/tryon"
-                    element={
-                        <ProtectedRoute>
-                            <TryOn />
-                        </ProtectedRoute>
-                    }
-                />
+                <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/about" element={<About />} />
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/models"
+                        element={
+                            <ProtectedRoute>
+                                <Models />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile"
+                        element={
+                            <ProtectedRoute>
+                                <Profile />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/edit-profile"
+                        element={
+                            <ProtectedRoute>
+                                <EditProfile />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/settings"
+                        element={
+                            <ProtectedRoute>
+                                <Settings />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/lead/:leadId"
+                        element={
+                            <ProtectedRoute>
+                                <LeadComponent />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/edit-lead/:leadId"
+                        element={
+                            <ProtectedRoute>
+                                <EditLead />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/tryon"
+                        element={
+                            <ProtectedRoute>
+                                <TryOn />
+                            </ProtectedRoute>
+                        }
+                    />
 
-                <Route path="/configurator" element={<Configurator />} />
-                <Route path="/3d2" element={<ThreeD2 />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-            </Routes>
-        </TooltipProvider>
-    </QueryClientProvider>
+                    <Route path="/configurator" element={<Configurator />} />
+                    <Route path="/3d2" element={<ThreeD2 />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </TooltipProvider>
+        </QueryClientProvider>
+    </ErrorBoundary>
 );
 
 export default App;
