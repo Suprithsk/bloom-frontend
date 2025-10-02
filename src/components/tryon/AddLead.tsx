@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { DashboardContext } from '@/context/DasboardContext';
-import './AddLead.scss';
+import './Addlead.scss';
 
 interface Model {
     model_id: string;
