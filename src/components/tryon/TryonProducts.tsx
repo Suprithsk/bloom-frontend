@@ -5,7 +5,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { DashboardContext } from "@/context/DasboardContext";
 import { Model } from "@/types/dashboard";
 import { toast } from "sonner";
-import "./TryonProducts.scss";
+import "./TryOnProducts.scss";
 
 interface TryonProductsProps {
     modalData?: (modalObj: any) => void;
