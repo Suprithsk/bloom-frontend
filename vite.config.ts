@@ -13,6 +13,21 @@ export default defineConfig(({ mode }) => ({
     global: 'globalThis',
     'process.env': {}
   },
+  build: {
+    target: 'es2015',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['lucide-react', '@radix-ui/react-toast']
+        }
+      }
+    }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom']
+  },
   plugins: [
     react(),
     mode === 'development' &&
@@ -23,7 +38,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  optimizeDeps: {
-    include: ['buffer']
-  }
 }));
