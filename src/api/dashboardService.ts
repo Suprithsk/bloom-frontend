@@ -1,5 +1,6 @@
 import { EditModel, Model } from "@/types/dashboard";
 import apiClient from "./apiService";
+import axios from "axios";
 
 export const fetchDashboardData = () => apiClient.get("/dashboard/");
 export const fetchModels = () => apiClient.get("/model/");
@@ -43,4 +44,22 @@ export const updateLeadDetails = (leadId: string, formData: FormData) => {
 
 export const deleteLeadById = (leadId: string) => {
     return apiClient.delete(`/lead/${leadId}/`);
+};
+
+// Add to your API service
+export const uploadImage = (formData: FormData) => {
+  return axios.post(`${import.meta.env.VITE_API_TOOL_IMAGE_BASE_URL}/App/uploadImage2/`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+export const createLead = (formData: FormData) => {
+  console.log('Creating lead with data:', formData);
+  return apiClient.post('/lead/', formData);
+};
+
+export const getModels = () => {
+  return apiClient.get('/model/');
 };

@@ -1,0 +1,156 @@
+@import '@/styles/mixins.scss';
+@import '@/styles/variables.scss';
+
+.tryon {
+    margin-top: 4rem; // Reduced from 10rem
+    min-height: calc(100vh - 8rem);
+    background-color: #f8fafc;
+
+    .tryon-main {
+        padding: 0 1rem;
+
+        @media (min-width: 768px) {
+            padding: 0 1.5rem; // Reduced padding
+        }
+    }
+
+    .tryon-container {
+        max-width: 1800px;
+        margin: 0 auto;
+        padding: 1.5rem 0; // Reduced from 2rem
+    }
+
+    .tryon-header {
+        margin-bottom: 1.5rem; // Reduced from 2rem
+
+        .tryon-title {
+            font-size: 1.75rem; // Reduced size
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+
+            @media (min-width: 768px) {
+                font-size: 2rem; // Reduced from 2.5rem
+            }
+        }
+
+        .tryon-subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+
+            @media (min-width: 768px) {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .tryon-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem; // Reduced gap
+
+        @media (min-width: 1024px) {
+            grid-template-columns: 320px 1fr; // Slightly wider sidebar
+            gap: 1.5rem; // Reduced gap
+        }
+
+        @media (min-width: 1536px) {
+            grid-template-columns: 380px 1fr; // Adjusted width
+            gap: 2rem;
+        }
+    }
+
+    .tryon-sidebar {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        padding: 1rem; // Reduced padding
+        height: fit-content;
+        max-height: calc(100vh - 12rem); // Add max height
+        overflow-y: auto;
+
+        @media (max-width: 1023px) {
+            order: 2;
+            max-height: 60vh; // Limit height on mobile
+        }
+    }
+
+    .tryon-upload {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        padding: 1rem; // Reduced padding
+        min-height: 500px; // Reduced from 600px
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        @media (max-width: 1023px) {
+            order: 1;
+            min-height: 400px; // Further reduced on mobile
+        }
+    }
+
+    // Modal styles - unchanged
+    .tryon-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        padding: 1rem;
+    }
+
+    .tryon-modal {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        max-width: 28rem;
+        width: 100%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .tryon-modal-content {
+        margin-bottom: 1.5rem;
+
+        p {
+            font-size: 1rem;
+            color: #374151;
+            line-height: 1.6;
+            margin: 0;
+        }
+    }
+
+    .tryon-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .tryon-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        font-size: 0.875rem;
+
+        &.tryon-btn-primary {
+            background-color: #059669;
+            color: white;
+
+            &:hover {
+                background-color: #047857;
+            }
+
+            &:focus {
+                outline: 2px solid #10b981;
+                outline-offset: 2px;
+            }
+        }
+    }
+}

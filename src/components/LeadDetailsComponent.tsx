@@ -90,14 +90,12 @@ const LeadDetailsComponent = () => {
         switch (status.toUpperCase()) {
             case "NEW":
                 return "bg-blue-500 text-white";
-            case "CONTACTED":
+            case "DRAFT":
                 return "bg-yellow-500 text-white";
             case "COMPLETED":
                 return "bg-green-500 text-white";
             case "REJECTED":
                 return "bg-red-500 text-white";
-            case "DRAFT":
-                return "bg-gray-500 text-white";
             default:
                 return "bg-muted text-muted-foreground";
         }
@@ -160,7 +158,7 @@ const LeadDetailsComponent = () => {
                                     <div className="flex justify-between items-center">
                                         <div className="flex justify-start gap-3">
                                             <CardTitle>Lead ID: #{leadDetails.lead_id}</CardTitle>
-                                            <Badge className={getStatusColor(leadDetails.status)}>
+                                            <Badge className={getStatusColor(leadDetails.status==="REJECTED"?"DRAFT": leadDetails.status)}>
                                                     {leadDetails.status === "REJECTED" ? "DRAFT" : leadDetails.status}
                                             </Badge>
                                         </div>
@@ -306,38 +304,7 @@ const LeadDetailsComponent = () => {
                 </div>
             </main>
 
-            {/* Delete Confirmation Modal */}
-            {showDeleteConfirm && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <Card className="w-full max-w-md mx-4">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <X className="w-5 h-5 text-red-500" />
-                                Delete Lead
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="mb-6">Are you sure you want to delete this lead? This action cannot be undone.</p>
-                            <div className="flex gap-4">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setShowDeleteConfirm(false)}
-                                    className="flex-1"
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    variant="destructive"
-                                    onClick={handleDelete}
-                                    className="flex-1"
-                                >
-                                    Delete
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
+          
         </div>
     );
 };

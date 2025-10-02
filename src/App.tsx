@@ -16,6 +16,7 @@ import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
 import LeadComponent from "./pages/LeadDetails";
 import EditLead from "./pages/EditLead";
+import TryOn from "./pages/Tryon";
 
 const queryClient = new QueryClient();
 
@@ -30,21 +31,17 @@ const App = () => (
                 <Route
                     path="/dashboard"
                     element={
-                        <DashboardProvider>
-                            <ProtectedRoute>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        </DashboardProvider>
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
                     }
                 />
                 <Route
                     path="/models"
                     element={
-                        <DashboardProvider>
-                            <ProtectedRoute>
-                                <Models />
-                            </ProtectedRoute>
-                        </DashboardProvider>
+                        <ProtectedRoute>
+                            <Models />
+                        </ProtectedRoute>
                     }
                 />
                 <Route
@@ -87,6 +84,15 @@ const App = () => (
                         </ProtectedRoute>
                     }
                 />
+                <Route
+                    path="/tryon"
+                    element={
+                        <ProtectedRoute>
+                            <TryOn />
+                        </ProtectedRoute>
+                    }
+                />
+
                 <Route path="/configurator" element={<Configurator />} />
                 <Route path="/3d2" element={<ThreeD2 />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

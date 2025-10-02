@@ -8,6 +8,8 @@ import {
     deleteModel,
     editModel,
     deleteLeadById,
+    updateLeadDetails,
+    createLead,
 } from "@/api/dashboardService";
 import {
     DashboardResponse,
@@ -20,7 +22,6 @@ import {
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { AxiosResponse } from "axios";
-
 interface ErrorValue extends Error {
     response?: {
         status: number;
@@ -48,6 +49,8 @@ interface DashboardContextType {
     isDeleting: boolean;
     isEditing: boolean;
     deleteLeadMutation: (leadId: string) => void;
+    editLeadMutation: (data: { leadId: string; formData: FormData }) => void;
+    createLeadMutation: (formData: FormData) => void;
 }
 
 interface DashboardProviderProps {
@@ -184,7 +187,39 @@ export const DashboardProvider: FC<DashboardProviderProps> = ({ children }) => {
             );
         }
     });
-
+    const editLeadMutation = useMutation({
+        mutationFn: ({
+            leadId,
+            formData,
+        }: {
+            leadId: string;
+            formData: FormData;
+        }) => updateLeadDetails(leadId, formData),
+        onSuccess: async (response, { leadId }) => {
+            console.log(response, leadId, "1");
+            // Invalidate and refetch leads
+            await queryClient.refetchQueries({ queryKey: ["leads"] });
+            await queryClient.refetchQueries({ queryKey: ["dashboard"] });
+            toast.success("Lead updated successfully");
+            console.log("2 Refetch completed");
+        },
+        onError: (error: ErrorValue) => {
+            console.error("Edit error:", error);
+            toast.error("Failed to update lead");
+        },
+    });
+    const createLeadMutation = useMutation({
+        mutationFn: (formData: FormData) => createLead(formData),
+        onSuccess: async (response) => {
+            toast.success("Lead created successfully");
+            await queryClient.refetchQueries({ queryKey: ["leads"] });
+            await queryClient.refetchQueries({ queryKey: ["dashboard"] });
+        },
+        onError: (error: ErrorValue) => {
+            console.error("Create error:", error);
+            toast.error("Failed to create lead");
+        },
+    });
     // Process existing data
     const models =
         modelsData?.data?.data?.filter(
@@ -213,6 +248,8 @@ export const DashboardProvider: FC<DashboardProviderProps> = ({ children }) => {
         isDeleting: deleteModelMutation.isPending,
         isEditing: editModelMutation.isPending,
         deleteLeadMutation: deleteLeadMutation.mutateAsync,
+        editLeadMutation: editLeadMutation.mutateAsync,
+        createLeadMutation: createLeadMutation.mutateAsync,
     };
 
     return (

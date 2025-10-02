@@ -9,6 +9,10 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  define: {
+    global: 'globalThis',
+    'process.env': {}
+  },
   plugins: [
     react(),
     mode === 'development' &&
@@ -19,4 +23,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['buffer']
+  }
 }));

@@ -19,8 +19,8 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
         switch (status) {
             case "NEW":
                 return "bg-blue-500 text-white";
-            case "CONTACTED":
-                return "bg-yellow-500 text-white";
+            case "DRAFT":
+                return "bg-yellow-500 text-white hover:bg-yellow-400";
             case "COMPLETED":
                 return "bg-green-500 text-white hover:bg-green-400";
             case "CLOSED":
@@ -68,9 +68,6 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
             try {
                 const response = await deleteLeadMutation!(leadId!);
                 toast.success("Lead deleted successfully!");
-                setTimeout(()=>{
-                    navigate('/dashboard')
-                }, 2000)
             } catch (error) {
                 console.error("Error deleting lead:", error);
                 toast.error(error?.response?.data?.message || "Error deleting lead");
@@ -169,10 +166,10 @@ const LeadsTab = ({ leads }: { leads: Lead[] }) => {
                                         <td className="px-4 py-3">
                                             <Badge
                                                 className={`${getLeadStatusColor(
-                                                    lead.status
+                                                    lead.status==="REJECTED"?"DRAFT": lead.status
                                                 )} text-xs`}
                                             >
-                                                {lead.status}
+                                                {lead.status==="REJECTED"?"DRAFT": lead.status}
                                             </Badge>
                                         </td>
                                         <td className="px-4 py-3">

@@ -1,4 +1,5 @@
 // ProtectedRoute.tsx
+import { DashboardProvider } from "@/context/DasboardContext";
 import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
@@ -13,7 +14,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         return <Navigate to="/" replace />;
     }
 
-    return children; // logged in → show page
+    return <>
+      <DashboardProvider>
+        {children}
+      </DashboardProvider>
+    </>; // logged in → show page
 };
 
 export default ProtectedRoute;

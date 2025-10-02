@@ -7,6 +7,7 @@ export default {
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
 		"./src/**/*.{ts,tsx}",
+		"!./src/components/tryon/**/*.{ts,tsx}" // Exclude tryon components
 	],
 	prefix: "",
 	theme: {
@@ -112,5 +113,6 @@ export default {
 			}
 		}
 	},
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
