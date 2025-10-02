@@ -17,7 +17,8 @@ import { useNavigate } from "react-router-dom";
 import { DashboardContext } from "@/context/DashboardContext";
 import { toast } from "sonner";
 import axios from "axios";
-import AWS from "aws-sdk";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 // React Image component
 const Image = ({ src, alt, className, ...props }: any) => (
     <img src={src} alt={alt} className={className} {...props} />
@@ -35,6 +36,13 @@ import AddLeadModal from "./AddLead";
 import "./TryonUploadImg.scss";
 import { fetchDashboardData, getModels } from "@/api/dashboardService";
 
+const s3Client = new S3Client({
+        region: "ap-south-1",
+        credentials: {
+            accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY,
+            secretAccessKey: import.meta.env.VITE_AWS_SECRET_KEY, // Changed from VITE_AWS_SECRET_ACCESS_KEY
+        },
+});
 const TryonUploadImg = ({ modalObj, tryonActive }) => {
     const [image, setImage] = useState("");
     const [imageUrl, setImageUrl] = useState("");
@@ -73,6 +81,7 @@ const TryonUploadImg = ({ modalObj, tryonActive }) => {
             console.error("Dashboard data fetch error:", err);
         }
     };
+    
     useEffect(() => {
         dashboardData();
     }, []);
@@ -233,32 +242,57 @@ const TryonUploadImg = ({ modalObj, tryonActive }) => {
 
     // get image from s3 bucket
 
+    // ...existing code...
     useEffect(() => {
-        if (awsImageKey) {
-            AWS.config.update({
-                accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY,
-                secretAccessKey: import.meta.env.VITE_AWS_SECRET_KEY,
-                region: "ap-south-1",
-            });
+        const getImageFromS3 = async () => {
+            if (!awsImageKey) return;
 
-            const s3 = new AWS.S3();
-            const params = {
-                Bucket: import.meta.env.VITE_BUCKET_NAME,
-                Key: awsImageKey,
-                Expires: 60,
-            };
+            if (!s3Client) {
+                console.error(
+                    "S3 client not initialized - check AWS credentials"
+                );
+                toast.error("AWS configuration error");
+                setIsUploading(false);
+                return;
+            }
 
-            s3.getSignedUrl("getObject", params, (err, url) => {
-                if (err) {
-                    console.error("Error fetching signed URL", err);
-                } else {
-                    console.log(url)
-                    setImage(url);
-                    setIsUploading(false);
+            try {
+                const bucketName = import.meta.env.VITE_BUCKET_NAME;
+
+                if (!bucketName) {
+                    throw new Error("Bucket name not configured");
                 }
-            });
-        }
+
+                const command = new GetObjectCommand({
+                    Bucket: bucketName,
+                    Key: awsImageKey,
+                });
+
+                const url = await getSignedUrl(s3Client, command, {
+                    expiresIn: 3600, // 1 hour
+                });
+
+                console.log("Successfully generated signed URL");
+                setImage(url);
+                setIsUploading(false);
+            } catch (error) {
+                console.error("Error fetching signed URL:", error);
+                setIsUploading(false);
+
+                // More specific error messages
+                if (error.message?.includes("credential")) {
+                    toast.error("AWS credentials are invalid or missing");
+                } else if (error.message?.includes("Bucket")) {
+                    toast.error("S3 bucket configuration error");
+                } else {
+                    toast.error("Failed to load image from storage");
+                }
+            }
+        };
+
+        getImageFromS3();
     }, [awsImageKey]);
+    // ...existing code...
 
     let objectGroup: any = null;
     const objectGroupArr: any[] = [];
@@ -1384,31 +1418,45 @@ const TryonUploadImg = ({ modalObj, tryonActive }) => {
 
     // fetch replaced image from s3
 
-    function getReplacedImageS3(imageKey: string): void {
-        if (imageKey) {
-            AWS.config.update({
-                accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY,
-                secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
-                region: "ap-south-1",
-            });
+    const getReplacedImageS3 = async (imageKey: string): Promise<void> => {
+        if (!imageKey) return;
 
-            const s3 = new AWS.S3();
-            const params = {
-                Bucket: import.meta.env.VITE_BUCKET_NAME,
-                Key: imageKey,
-                Expires: 60,
-            };
-
-            s3.getSignedUrl("getObject", params, (err, url) => {
-                if (err) {
-                    console.error("Error fetching signed URL", err);
-                } else {
-                    setremovedObjImage(url);
-                    setIsUploading(false);
-                }
-            });
+        if (!s3Client) {
+            console.error("S3 client not initialized");
+            toast.error("AWS service not available");
+            setIsUploading(false);
+            return;
         }
-    }
+
+        try {
+            const bucketName = import.meta.env.VITE_BUCKET_NAME;
+
+            if (!bucketName) {
+                throw new Error("Bucket name not configured");
+            }
+
+            const command = new GetObjectCommand({
+                Bucket: bucketName,
+                Key: imageKey,
+            });
+
+            const url = await getSignedUrl(s3Client, command, {
+                expiresIn: 3600,
+            });
+
+            setremovedObjImage(url);
+            setIsUploading(false);
+        } catch (error) {
+            console.error("Error fetching signed URL:", error);
+            setIsUploading(false);
+
+            if (error.message?.includes("credential")) {
+                toast.error("AWS credentials are invalid or missing");
+            } else {
+                toast.error("Failed to load processed image");
+            }
+        }
+    };
 
     let camera: THREE.PerspectiveCamera,
         canvas: HTMLCanvasElement,
