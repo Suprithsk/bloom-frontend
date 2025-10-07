@@ -4,6 +4,7 @@ import { FeaturesSection } from "@/components/features-section";
 import { SocialProofSection } from "@/components/social-proof-section";
 import { CTASection } from "@/components/cta-section";
 import { Footer } from "@/components/footer";
+import ReplaciAction from "@/components/replaci-action";
 
 const Index = () => {
   return (
@@ -12,7 +13,7 @@ const Index = () => {
       <main>
         <HeroSection />
         <FeaturesSection />
-        <SocialProofSection />
+        <ReplaciAction />
         <CTASection />
       </main>
       <Footer />

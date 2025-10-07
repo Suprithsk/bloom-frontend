@@ -114,8 +114,14 @@ const MyModelsPage = ({ models }: MyModelsPageProps) => {
             <div className="">
                 {/* Header */}
                 <div className="border-b bg-white rounded-md">
-                    <div className="container mx-auto px-4 py-6">
+                    <div className="container mx-auto px-4 py-6 flex items-center justify-between">
                         <h1 className="text-2xl font-bold">My Models</h1>
+                        <Button
+                            onClick={() => navigate("/create-model")}
+                            className="bg-green-500 hover:bg-green-600"
+                        >
+                            Create New Model
+                        </Button>
                     </div>
                 
 

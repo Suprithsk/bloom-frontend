@@ -18,6 +18,13 @@ import LeadComponent from "./pages/LeadDetails";
 import EditLead from "./pages/EditLead";
 import TryOn from "./pages/Tryon";
 import ErrorBoundary from "./pages/ErrorBoundary";
+import SubscriptionsComponent from "./components/SubscriptionComponent";
+import Subscriptions from "./pages/Subscription";
+import Notifications from "./pages/Notifications";
+import CreateModel from "./pages/CreateModel";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +37,8 @@ const App = () => (
                 <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/about" element={<About />} />
+                    <Route path='/terms' element={<Terms />} />
+                    <Route path='/privacy' element={<Privacy />} />
                     <Route
                         path="/dashboard"
                         element={
@@ -94,9 +103,30 @@ const App = () => (
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/subscriptions"
+                        element={
+                            <ProtectedRoute>
+                                <Subscriptions />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/notifications"
+                        element={
+                            <ProtectedRoute>
+                                <Notifications />
+                            </ProtectedRoute>
+                        }
+                    />
 
-                    <Route path="/configurator" element={<Configurator />} />
+                    <Route path="/create-model" element={
+                        <ProtectedRoute>
+                            <CreateModel />
+                        </ProtectedRoute>
+                    } />
                     <Route path="/3d2" element={<ThreeD2 />} />
+                    <Route path='/contact' element={<Contact />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>

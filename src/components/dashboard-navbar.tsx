@@ -4,16 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Bell, ChevronDown, User, LogOut, Settings } from "lucide-react";
 import { toast } from "sonner";
+import apiClient from "@/api/apiService";
+import moment from "moment";
+
+interface Notification {
+    id: number;
+    title: string;
+    message: string;
+    is_read: boolean;
+    created_at: string;
+}
 
 export function DashboardNavbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(
         !!localStorage.getItem("token")
     );
     const [isAccountOpen, setIsAccountOpen] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [userInfo, setUserInfo] = useState({ name: "", email: "" });
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const notificationRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -24,10 +39,13 @@ export function DashboardNavbar() {
             const username =
                 localStorage.getItem("username") || email.split("@")[0];
             setUserInfo({ name: username, email });
+            
+            // Fetch notifications when component mounts
+            getNotifications();
         }
     }, []);
 
-    // Close dropdown when clicking outside
+    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -35,6 +53,12 @@ export function DashboardNavbar() {
                 !dropdownRef.current.contains(event.target as Node)
             ) {
                 setIsAccountOpen(false);
+            }
+            if (
+                notificationRef.current &&
+                !notificationRef.current.contains(event.target as Node)
+            ) {
+                setIsNotificationOpen(false);
             }
         };
 
@@ -44,6 +68,52 @@ export function DashboardNavbar() {
         };
     }, []);
 
+    const getNotifications = async () => {
+        if (!isLoggedIn) return;
+        
+        setLoading(true);
+        try {
+            const response = await apiClient.get(`${import.meta.env.VITE_API_BASE_URL}/notifications/`);
+            console.log(response, "notications response");
+            if (response?.data?.status === "true") {
+                const notificationsData = response.data.result;
+                console.log(notificationsData, "notifications data");
+                setNotifications(notificationsData);
+                
+                // Calculate unread count
+                const unreadNotifications = notificationsData.filter(
+                    (notification: Notification) => !notification.is_read
+                );
+                setUnreadCount(unreadNotifications.length);
+            }
+        } catch (error) {
+            console.error("Error fetching notifications:", error);
+            // toast.error("Failed to load notifications");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const markNotificationAsRead = async (notificationId: number) => {
+        try {
+            await apiClient.put(`${import.meta.env.VITE_API_BASE_URL}/notifications/${notificationId}/mark-read/`);
+            
+            // Update local state
+            setNotifications(prev => 
+                prev.map(notification => 
+                    notification.id === notificationId 
+                        ? { ...notification, is_read: true }
+                        : notification
+                )
+            );
+            
+            // Update unread count
+            setUnreadCount(prev => Math.max(0, prev - 1));
+        } catch (error) {
+            console.error("Error marking notification as read:", error);
+        }
+    };
+
     const handleLogout = () => {
         // Clear all stored data
         localStorage.removeItem("token");
@@ -51,10 +121,14 @@ export function DashboardNavbar() {
         localStorage.removeItem("phone_number");
         localStorage.removeItem("email");
         localStorage.removeItem("username");
+        localStorage.removeItem("subscriptionDetails");
 
         // Update state
         setIsLoggedIn(false);
         setIsAccountOpen(false);
+        setIsNotificationOpen(false);
+        setNotifications([]);
+        setUnreadCount(0);
 
         // Show success message
         toast.success("Logged out successfully!");
@@ -65,6 +139,12 @@ export function DashboardNavbar() {
 
     const toggleAccountDropdown = () => {
         setIsAccountOpen(!isAccountOpen);
+        setIsNotificationOpen(false); // Close notifications when opening account
+    };
+
+    const toggleNotificationDropdown = () => {
+        setIsNotificationOpen(!isNotificationOpen);
+        setIsAccountOpen(false); // Close account when opening notifications
     };
 
     const isActiveLink = (path: string) => {
@@ -80,6 +160,10 @@ export function DashboardNavbar() {
         { href: "/settings", label: "Settings" },
         { href: "/tryon", label: "Replaci Vision" },
     ];
+
+    // Get latest 5 unread notifications for dropdown
+    const recentNotifications = notifications
+        .slice(0, 5);
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-20 bg-background/95 backdrop-blur-lg border-b border-border shadow-sm">
@@ -143,12 +227,71 @@ export function DashboardNavbar() {
                 {/* Desktop Right Section */}
                 <div className="hidden lg:flex items-center gap-4">
                     {/* Notifications */}
-                    <Button variant="ghost" size="icon" className="relative">
-                        <Bell className="h-5 w-5" />
-                        <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-                            3
-                        </span>
-                    </Button>
+                    {isLoggedIn && (
+                        <div className="relative" ref={notificationRef}>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="relative"
+                                onClick={toggleNotificationDropdown}
+                            >
+                                <Bell className="h-5 w-5" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
+                            </Button>
+
+                            {/* Notifications Dropdown */}
+                            {isNotificationOpen && (
+                                <div className="absolute right-0 top-full mt-2 w-80 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
+                                    {/* Header */}
+                                    <div className="px-4 py-3 border-b border-border flex justify-between items-center">
+                                        <h3 className="font-semibold text-sm">Notifications</h3>
+                                        <Link 
+                                            to="/notifications" 
+                                            className="text-xs text-primary hover:underline"
+                                            onClick={() => setIsNotificationOpen(false)}
+                                        >
+                                            View All
+                                        </Link>
+                                    </div>
+
+                                    {/* Notifications List */}
+                                    <div className="max-h-80 overflow-y-auto">
+                                        {loading ? (
+                                            <div className="px-4 py-3 text-center text-sm text-muted-foreground">
+                                                Loading notifications...
+                                            </div>
+                                        ) : recentNotifications.length > 0 ? (
+                                            recentNotifications.map((notification) => (
+                                                <div 
+                                                    key={notification.id}
+                                                    className="px-4 py-3 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
+                                                    onClick={() => markNotificationAsRead(notification.id)}
+                                                >
+                                                    <p className="text-sm font-medium text-foreground">
+                                                        #{notification.id} {notification.title}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        {notification.message}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        {moment(notification.created_at).fromNow()}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="px-4 py-3 text-center text-sm text-muted-foreground">
+                                                No new notifications
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* Account Dropdown */}
                     {isLoggedIn && (
@@ -242,6 +385,25 @@ export function DashboardNavbar() {
                                                 {userInfo.email}
                                             </p>
                                         </div>
+                                    </div>
+                                )}
+
+                                {/* Mobile Notifications */}
+                                {isLoggedIn && (
+                                    <div className="px-4 py-2 border-b border-border">
+                                        <Button 
+                                            variant="ghost" 
+                                            className="w-full justify-start gap-3"
+                                            onClick={() => navigate('/notifications')}
+                                        >
+                                            <Bell className="h-4 w-4" />
+                                            Notifications
+                                            {unreadCount > 0 && (
+                                                <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                                    {unreadCount}
+                                                </span>
+                                            )}
+                                        </Button>
                                     </div>
                                 )}
 

@@ -63,3 +63,19 @@ export const createLead = (formData: FormData) => {
 export const getModels = () => {
   return apiClient.get('/model/');
 };
+
+export const createModel = (formData: FormData) => {
+    return apiClient.post('/model/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
+
+export const submitContactForm = (formData: FormData) => {
+    return apiClient.post('/get-in-touch/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
