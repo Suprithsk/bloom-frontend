@@ -1543,7 +1543,7 @@ const TryonUploadImg = ({ modalObj, tryonActive }) => {
             axios
                 .post(
                     import.meta.env.VITE_API_TOOL_IMAGE_BASE_URL +
-                        "/App/RemoveObjectViaFlux/",
+                        "/App/RemoveObjectAndInpaint/",
                     formData
                 )
                 .then((response) => {
