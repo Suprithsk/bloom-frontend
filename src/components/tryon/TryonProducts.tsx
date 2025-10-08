@@ -29,11 +29,8 @@ const TryonProducts: React.FC<TryonProductsProps> = ({ modalData }) => {
     const fetchProducts = () => {
         setLoading(true);
         try {
-            const approvedProducts = modelsDataList.filter(
-                (product: Model) =>
-                    product.status === "APPROVED" &&
-                    product.tripo_status !== "pending"
-            );
+            const approvedProducts = modelsDataList
+            console.log("Fetched products:", approvedProducts);
             setProducts(approvedProducts);
         } catch (error) {
             console.error("Error fetching products:", error);
@@ -44,8 +41,8 @@ const TryonProducts: React.FC<TryonProductsProps> = ({ modalData }) => {
     };
 
     const filteredPending = products.filter(product => product.status !== "REJECTED");
-    const filteredDraft = filteredPending.filter(product => product.status !== "DRAFT");
-    const filteredProducts = selectedCategory === 'all' ? filteredDraft : filteredDraft.filter(ft => ft.category === selectedCategory);
+    // const filteredDraft = filteredPending.filter(product => product.status !== "DRAFT");
+    const filteredProducts = selectedCategory === 'all' ? filteredPending : filteredPending.filter(ft => ft.category === selectedCategory);
 
     const categories = ["all", ...new Set(products.map((p) => p.category))];
 
