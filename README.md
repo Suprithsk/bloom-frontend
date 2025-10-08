@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# REPLACI - AI-Powered Furniture Visualization Platform
 
-## Project info
+REPLACI helps customers see how furniture looks in their homes in 60 seconds using AI. This is the early access landing page for waitlist signups.
 
-**URL**: https://lovable.dev/projects/feb6dbef-3085-4b39-9486-38913c1830e6
+## Tech Stack
 
-## How can I edit this code?
+- React 18 + TypeScript
+- Vite
+- Bun (package manager)
+- Tailwind CSS
+- shadcn/ui components
+- React Router DOM
 
-There are several ways of editing your application.
+## Quick Start
 
-**Use Lovable**
+```bash
+# Install dependencies
+bun install
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/feb6dbef-3085-4b39-9486-38913c1830e6) and start prompting.
+# Start development
+bun run dev
 
-Changes made via Lovable will be committed automatically to this repo.
+# Build for production
+bun run build
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Preview build
+bun run preview
 ```
 
-**Edit a file directly in GitHub**
+## Environment Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Copy `.env.example` to `.env` and add your keys:
 
-**Use GitHub Codespaces**
+```env
+VITE_API_BASE_URL=your_api_url
+VITE_AWS_ACCESS_KEY=your_aws_key
+VITE_AWS_SECRET_KEY=your_aws_secret
+VITE_S3_BUCKET_REGION=your_region
+VITE_BUCKET_NAME=your_bucket
+VITE_RAZORPAY_KEY_ID=your_razorpay_key
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## What's Inside
 
-## What technologies are used for this project?
+- **Landing Page**: Hero section with waitlist email capture
+- **Interactive Demo**: Live furniture visualization with color variants
+- **Legal Pages**: Terms & Privacy Policy with proper formatting
+- **3D Configurator**: Advanced furniture customization page
+- **Responsive Design**: Mobile-first approach
 
-This project is built with:
+## Key Components
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- `HeroSection` - Main landing with email signup form
+- `ReplaciAction` - Interactive furniture demo (Orelia Daybed, Rejoice Sofa, Nuvia Sofa)
+- `FeaturesSection` - Platform benefits showcase
+- `CTASection` - Secondary email capture
+- `Terms/Privacy` - Legal compliance pages
 
-## How can I deploy this project?
+## Project Structure
 
-Simply open [Lovable](https://lovable.dev/projects/feb6dbef-3085-4b39-9486-38913c1830e6) and click on Share -> Publish.
+```
+src/
+├── components/
+│   ├── ui/           # shadcn/ui components
+│   ├── hero-section.tsx
+│   ├── replaci-action.tsx
+│   ├── features-section.tsx
+│   └── navbar.tsx
+├── pages/
+│   ├── Index.tsx     # Main landing page
+│   ├── Terms.tsx     # Terms & Conditions
+│   ├── Privacy.tsx   # Privacy Policy
+│   └── 3D2.tsx       # 3D configurator
+├── hooks/
+└── lib/
+```
 
-## Can I connect a custom domain to my Lovable project?
+## Features
 
-Yes, you can!
+- Email waitlist with toast notifications
+- Interactive furniture placement demo
+- Color variant selection for furniture
+- Real-time room visualization
+- Legal compliance (Terms & Privacy)
+- 3D model configuration interface
+- AWS S3 integration for assets
+- Razorpay payment integration ready
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Related Project
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The full REPLACI platform is in `/Frontend` (Next.js) - this is the marketing/early access site.
+
+## Contact
+
+**Email**: hello@replaci.com
+**Company**: SSR Replaci Solutions Private Limited
+
+---
+
+**AI furniture visualization for retailers - Built with React + TypeScript**
